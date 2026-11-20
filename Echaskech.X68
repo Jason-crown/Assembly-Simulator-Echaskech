@@ -11,8 +11,10 @@ Y   equ     10
 * Put program code here    
 
 Main:           
-                clr.l       d5
-                clr.l       d6
+                move.l      #$00FF00FF,d1
+                jsr         _SET_COLOR
+                move.w      #100,d5
+                move.w      #100,d6
                 lea         DIS,a1
                 move.b      #13,d0
                 trap        #15
@@ -102,23 +104,28 @@ LEFT:
                 
 CHECK_INPUTS:
                 movem.l     d0-d1,-(a7)
+                ;move.b      #5,d0
                 move.b      #19,d0    
                 move.l      #'MmCc',d1
                 trap        #15
                 
                 tst.b       d1
+                ;cmp.b       #'c',d1
                 bne         CLEAR
                 
                 lsr.l       #8,d1
                 tst.b       d1
+                ;cmp.b       #'C',d1
                 bne         CLEAR
                 
                 lsr.l       #8,d1
                 tst.b       d1
+                ;cmp.b       #'M',d1
                 bne         MENU
                 
                 lsr.l       #8,d1
                 tst.b       d1
+                ;cmp.b       #'m',d1
                 bne         MENU
                 movem.l     (a7)+,d0-d1
                 rts 
@@ -152,11 +159,8 @@ SLEEP:
                 
     
 _SET_COLOR:                 ; $00BBGGRR
-                movem.l     d0-d1,-(sp)
-                move.l      8(a6),d1
                 move.b      #80,d0          ; Task 80: Set pen color
                 trap        #15             ; Execute simulator task
-                movem.l     (sp)+,d0-d1
                 rts
 
 WRITE:
