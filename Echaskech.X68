@@ -6,13 +6,25 @@
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
-
+X   equ     8
+Y   equ     10
 * Put program code here    
-                move.l  #$00640064,d1
-                move.b  #82,d0          ; Task 82: Draw pixel in pen color
-                trap    #15             ; Execute simulator task
+WRITE:
+                
+                link        a6,#0
+                movem.l     d0-d2,-(a7)
+                move.w      X(a6),d1
+                move.w      Y(a6),d2
+                move.b      #82,d0          ; Task 82: Draw pixel in pen color
+                trap        #15             ; Execute simulator task
+                movem.l     (a7)+,d0-d2
+                unlk        a6
+                
+                rts
 Main:           
-LOOP:           jsr         CHECK_ARROWS
+LOOP:           
+
+                jsr         CHECK_ARROWS
                 jsr         SLEEP
                 jsr         LOOP
 
@@ -120,6 +132,7 @@ _SET_COLOR:                 ; $00BBGGRR
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 *~Font name~Courier New~
 *~Font size~10~
