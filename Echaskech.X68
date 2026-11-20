@@ -9,9 +9,10 @@ START:                  ; first instruction of program
 X   equ     8
 Y   equ     10
 * Put program code here    
+
+Main:           
                 clr.l       d5
                 clr.l       d6
-Main:           
                 lea         DIS,a1
                 move.b      #13,d0
                 trap        #15
@@ -100,7 +101,7 @@ LEFT:
                 rts
                 
 CHECK_INPUTS:
-                movem.l     d0-d1,-(a6)
+                movem.l     d0-d1,-(a7)
                 move.b      #19,d0    
                 move.l      #'MmCc',d1
                 trap        #15
@@ -119,7 +120,7 @@ CHECK_INPUTS:
                 lsr.l       #8,d1
                 tst.b       d1
                 bne         MENU
-                movem.l     (a6)+,d0-d1
+                movem.l     (a7)+,d0-d1
                 rts 
 MENU:
                 lea         MSG,a1
@@ -130,13 +131,15 @@ MENU:
                 trap        #15
                 move.l      d1,-(a7)
                 jsr         _SET_COLOR
-                addi        #16,(a7)
+                addi        #4,(a7)
+                rts
 CLEAR:          
                 movem.l     d0-d1,-(sp)
                 move.w      #$FF00,d1
                 move.b      #11,d0
                 trap        #15
-                movem.l     (sp)+,d0-d1                
+                movem.l     (sp)+,d0-d1 
+                jsr         Main               
                 rts    
 
 SLEEP:
@@ -150,9 +153,9 @@ SLEEP:
     
 _SET_COLOR:                 ; $00BBGGRR
                 movem.l     d0-d1,-(sp)
-                move.l  8(a6),d1
-                move.b  #80,d0          ; Task 80: Set pen color
-                trap    #15             ; Execute simulator task
+                move.l      8(a6),d1
+                move.b      #80,d0          ; Task 80: Set pen color
+                trap        #15             ; Execute simulator task
                 movem.l     (sp)+,d0-d1
                 rts
 
@@ -174,7 +177,6 @@ WRITE:
 * Put variables and constants here
 DIS dc.b   'm = Color (00RRGGBB), c = Clear stage',0
 MSG dc.b   'Input (00RRGGBB)',0
-COL dc.l   0
     END    START        ; last line of source
 
 
