@@ -12,7 +12,9 @@ Y   equ     10
                 clr.l       d5
                 clr.l       d6
 Main:           
-                jsr         MENU
+                lea         DIS,a1
+                move.b      #13,d0
+                trap        #15
 LOOP:           
 
                 jsr         CHECK_ARROWS
@@ -120,7 +122,15 @@ CHECK_INPUTS:
                 movem.l     (a6)+,d0-d1
                 rts 
 MENU:
-                               
+                lea         MSG,a1
+                move.b      #13,d0
+                trap        #15
+                
+                move.b      #4,d0
+                trap        #15
+                move.l      d1,-(a7)
+                jsr         _SET_COLOR
+                addi        #16,(a7)
 CLEAR:          
                 movem.l     d0-d1,-(sp)
                 move.w      #$FF00,d1
@@ -164,6 +174,7 @@ WRITE:
 * Put variables and constants here
 DIS dc.b   'm = Color (00RRGGBB), c = Clear stage',0
 MSG dc.b   'Input (00RRGGBB)',0
+COL dc.l   0
     END    START        ; last line of source
 
 
