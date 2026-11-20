@@ -137,9 +137,10 @@ MENU:
                 jsr         ASCII_TO_HEX
                 
                 move.l      d0,d1
-                move.b      #16,d2
-                move.b      #15,d0
-                trap        #15
+                ;move.l      (a1),d1
+                ;move.b      #16,d2
+                ;move.b      #15,d0
+                ;trap        #15
                         
                 jsr         STCOL
                 jsr         LOOP
@@ -214,22 +215,22 @@ ASCII_TO_HEX:
                 moveq       #7,d2
 NEXT_CHAR:      move.b      (a0)+,d3
                 cmpi.b      #'0',d3
-                blt.s       INVALID_CHAR
+                blt         INVALID_CHAR
                 cmpi.b      #'9',d3
-                ble.s       IS_DIGIT
+                ble         IS_DIGIT
                 andi.b      #$DF,d3
                 cmpi.b      #'A',d3
-                blt.s       INVALID_CHAR
+                blt         INVALID_CHAR
                 cmpi.b      #'F',d3
-                bgt.s       INVALID_CHAR
+                bgt         INVALID_CHAR
                 subi.b      #'A'-10,d3
-                bra.s       SHIFT_IN
+                bra         SHIFT_IN
 IS_DIGIT:       subi.b      #'0',d3
 SHIFT_IN:       lsl.l       #4,d0
                 andi.l      #$0F,d3
                 or.b        d3,d0
                 dbra        d2,NEXT_CHAR
-                bra.s       done
+                bra.l       done
 INVALID_CHAR:   moveq       #1,d1
 DONE:           movem.l     (a7)+,d2-d3/a0
                 rts
@@ -241,6 +242,7 @@ MSG dc.b   'Input (00RRGGBB)',0
 BUF ds.b    80
 BLK dc.b   '                                                                                 ',0
     END    START        ; last line of source
+
 
 
 *~Font name~Courier New~
