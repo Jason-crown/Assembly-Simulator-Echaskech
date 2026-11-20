@@ -9,7 +9,7 @@ START:                  ; first instruction of program
 X   equ     8
 Y   equ     10
 * Put program code here    
-                move.l      #$00FF00FF,d1
+                move.l      #$00FFFFFF,d1
                 jsr         STCOL
 Main:           
                 move.w      #100,d5
@@ -127,21 +127,50 @@ CHECK_INPUTS:
 MENU:
                 jsr         CLR_LN
                 lea         MSG,a1
-                move.b      #13,d0
+                move.b      #14,d0
                 trap        #15
                 
                 lea         BUF,a1
                 move.b      #2,d0
                 trap        #15
                 
-                jsr         ASCII_TO_HEX
+                clr.l       d2
+                clr.l       d3
                 
-                move.l      d0,d1
-                ;move.l      (a1),d1
-                ;move.b      #16,d2
-                ;move.b      #15,d0
-                ;trap        #15
-                        
+PARSE_LOOP:
+                move.b      (a1)+,d3
+                beq         DONE
+                
+                cmp.b       #'$',d3
+                beq         PARSE_LOOP
+                
+                cmp.b       #'0',d3
+                blt         INVALID
+                cmp.b       #'9',d3
+                ble         IS_DIGIT
+                
+                and.b       #$DF,d3
+                cmp.b       #'A',d3
+                blt         INVALID
+                cmp.b       #'F',d3
+                bgt         INVALID
+                
+                sub.b       #'A'-10,d3
+                bra         SHIFT_IN
+                
+IS_DIGIT:
+                sub.b       #'0',d3
+SHIFT_IN:       
+                lsl.l       #4,d2
+                or.b        d3,d2
+                bra         PARSE_LOOP
+INVALID:        
+                lea         ESG,a1
+                move.b      #13,d0
+                trap        #15
+                bra         START
+DONE:
+                move.l      d2,d1        
                 jsr         STCOL
                 jsr         LOOP
                 rts
@@ -208,40 +237,16 @@ NEW_LINE:
                 
 
 
-ASCII_TO_HEX:
-                movem.l     d2-d3/A0,-(a7)
-                clr.l       d0
-                clr.l       d1
-                moveq       #7,d2
-NEXT_CHAR:      move.b      (a0)+,d3
-                cmpi.b      #'0',d3
-                blt         INVALID_CHAR
-                cmpi.b      #'9',d3
-                ble         IS_DIGIT
-                andi.b      #$DF,d3
-                cmpi.b      #'A',d3
-                blt         INVALID_CHAR
-                cmpi.b      #'F',d3
-                bgt         INVALID_CHAR
-                subi.b      #'A'-10,d3
-                bra         SHIFT_IN
-IS_DIGIT:       subi.b      #'0',d3
-SHIFT_IN:       lsl.l       #4,d0
-                andi.l      #$0F,d3
-                or.b        d3,d0
-                dbra        d2,NEXT_CHAR
-                bra.l       done
-INVALID_CHAR:   moveq       #1,d1
-DONE:           movem.l     (a7)+,d2-d3/a0
-                rts
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
 DIS dc.b   '0 = Color (00RRGGBB), 1 = Clear stage',0
 MSG dc.b   'Input (00RRGGBB)',0
-BUF ds.b    80
+BUF ds.b   82
+ESG dc.b   'Invalid hex character!',0
 BLK dc.b   '                                                                                 ',0
     END    START        ; last line of source
+
 
 
 
