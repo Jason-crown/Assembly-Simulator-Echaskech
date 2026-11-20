@@ -9,22 +9,16 @@ START:                  ; first instruction of program
 X   equ     8
 Y   equ     10
 * Put program code here    
-WRITE:
-                
-                link        a6,#0
-                movem.l     d0-d2,-(a7)
-                move.w      X(a6),d1
-                move.w      Y(a6),d2
-                move.b      #82,d0          ; Task 82: Draw pixel in pen color
-                trap        #15             ; Execute simulator task
-                movem.l     (a7)+,d0-d2
-                unlk        a6
-                
-                rts
+                clr.l       d5
+                clr.l       d6
 Main:           
 LOOP:           
 
                 jsr         CHECK_ARROWS
+                move.w      d5,-(a7)
+                move.w      d6,-(a7)
+                jsr         WRITE
+                addq        #8,(a7)
                 jsr         SLEEP
                 jsr         LOOP
 
@@ -88,24 +82,16 @@ CHECK_ARROWS:                           ; get arrow inputs\
                 rts
                 
 DOWN:
-                move.w      #6,d0
-                move.w      #'D',d1
-                trap        #15
+                addi        #1,d5
                 rts
 RIGHT:           
-                move.w      #6,d0
-                move.w      #'R',d1
-                trap        #15
+                addi        #1,d6
                 rts
 UP:
-                move.w      #6,d0
-                move.w      #'U',d1
-                trap        #15
+                subi        #1,d5
                 rts
 LEFT:
-                move.w      #6,d0
-                move.w      #'L',d1
-                trap        #15               
+                subi        #1,d6               
                 rts
 SLEEP:
                 movem.l     d0-d1,-(sp)
@@ -121,7 +107,17 @@ _SET_COLOR:                 ; $00BBGGRR
     trap    #15             ; Execute simulator task
     rts
 
-
+WRITE:
+                
+                link        a6,#0
+                movem.l     d0-d2,-(a7)
+                move.w      X(a6),d1
+                move.w      Y(a6),d2
+                move.b      #82,d0          ; Task 82: Draw pixel in pen color
+                trap        #15             ; Execute simulator task
+                movem.l     (a7)+,d0-d2
+                unlk        a6 
+                rts
 
 
 
