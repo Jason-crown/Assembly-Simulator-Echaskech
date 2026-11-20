@@ -217,13 +217,6 @@ CLR_LN:
                 trap        #15
                 movem.l     (a7)+,d0-d1/a1
                 rts
-ONECHO:
-                movem.l     d0-d1,-(a7)
-                move.b      #12,d0
-                move.b      4(a6),d1
-                trap        #15
-                movem.l     (a7)+,d0-d1
-                rts
                 
 NEW_LINE:   
                 movem.l     d0-d1,-(a7)
