@@ -15,12 +15,33 @@ Y   equ     10
                 jsr         CRTBRD
 CRTBRD:
                 movem.l     d0-d2,-(a7)
-                move.l      #$00FF0000,d1
+                move.l      #$000000FF,d1
                 jsr         STCOL
-                move.w      #30,-(a7)
-                move.w      #30,-(a7)
-                move.w      #60,-(a7)
-                move.w      #60,-(a7)
+                move.w      #0,-(a7)
+                move.w      #0,-(a7)
+                move.w      #637,-(a7)
+                move.w      #50,-(a7)
+                jsr         _SHAPE
+                addi        #8,(a7)
+                
+                move.w      #587,-(a7)
+                move.w      #0,-(a7)
+                move.w      #637,-(a7)
+                move.w      #480,-(a7)
+                jsr         _SHAPE
+                addi        #8,(a7)
+                
+                move.w      #0,-(a7)
+                move.w      #0,-(a7)
+                move.w      #50,-(a7)
+                move.w      #480,-(a7)
+                jsr         _SHAPE
+                addi        #8,(a7)
+                
+                move.w      #0,-(a7)
+                move.w      #430,-(a7)
+                move.w      #637,-(a7)
+                move.w      #480,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
                 movem.l     (a7)+,d0-d2
@@ -244,11 +265,11 @@ NEW_LINE:
                 
 _SHAPE:
                 link    a6,#-2
-                move.w  XO(a6),d1
-                move.w  YO(a6),d2
-                move.w  XS(a6),d3
-                move.w  YS(a6),d4
-                move.w  d1,SXO(a6)
+                move.w  14(a6),d1
+                move.w  12(a6),d2
+                move.w  10(a6),d3
+                move.w  8(a6),d4
+                move.w  d1,-2(a6)
 loop2:    
 loop1:  
                 addq.w  #1,d1
@@ -258,7 +279,7 @@ loop1:
                 blo     loop1
                 addq.w  #1,d2
     
-                move.w  SXO(a6),d1
+                move.w  -2(a6),d1
 
    
                 cmp     d4,d2          ; Height
@@ -276,6 +297,7 @@ BUF ds.b   82
 ESG dc.b   'Invalid hex character!',0
 BLK dc.b   '                                                                                 ',0
     END    START        ; last line of source
+
 
 
 
