@@ -9,8 +9,22 @@ START:                  ; first instruction of program
 X   equ     8
 Y   equ     10
 * Put program code here    
+
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
+                jsr         CRTBRD
+CRTBRD:
+                movem.l     d0-d2,-(a7)
+                move.l      #$00FF0000,d1
+                jsr         STCOL
+                move.w      #30,-(a7)
+                move.w      #30,-(a7)
+                move.w      #60,-(a7)
+                move.w      #60,-(a7)
+                jsr         _SHAPE
+                addi        #8,(a7)
+                movem.l     (a7)+,d0-d2
+                
 Main:           
                 move.w      #100,d5
                 move.w      #100,d6
@@ -228,6 +242,29 @@ NEW_LINE:
                 movem.l     (a7)+,d0-d1
                 rts
                 
+_SHAPE:
+                link    a6,#-2
+                move.w  XO(a6),d1
+                move.w  YO(a6),d2
+                move.w  XS(a6),d3
+                move.w  YS(a6),d4
+                move.w  d1,SXO(a6)
+loop2:    
+loop1:  
+                addq.w  #1,d1
+                move.b  #82,d0          ; Task 82: Draw pixel in pen color
+                trap    #15             ; Execute simulator task
+                cmp     d3,d1          ; Width
+                blo     loop1
+                addq.w  #1,d2
+    
+                move.w  SXO(a6),d1
+
+   
+                cmp     d4,d2          ; Height
+                blo     loop2    
+                unlk    a6
+                rts
 
 
     SIMHALT             ; halt simulator
