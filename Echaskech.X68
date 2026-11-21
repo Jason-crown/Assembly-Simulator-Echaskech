@@ -22,7 +22,7 @@ CRTBRD:
                 
                 move.w      #0,-(a7)
                 move.w      #0,-(a7)
-                move.w      #637,-(a7)
+                move.w      #638,-(a7)
                 move.w      #480,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
@@ -32,14 +32,14 @@ CRTBRD:
                 
                 move.w      #0,-(a7)
                 move.w      #0,-(a7)
-                move.w      #637,-(a7)
+                move.w      #638,-(a7)
                 move.w      #50,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
                 
                 move.w      #587,-(a7)
                 move.w      #0,-(a7)
-                move.w      #637,-(a7)
+                move.w      #638,-(a7)
                 move.w      #480,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
