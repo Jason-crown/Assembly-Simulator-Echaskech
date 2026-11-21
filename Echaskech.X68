@@ -300,7 +300,8 @@ loop1:
                 unlk    a6
                 rts
 
-
+QUIT:
+EXIT:
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
