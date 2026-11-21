@@ -14,9 +14,22 @@ Y   equ     10
                 jsr         STCOL
                 jsr         CRTBRD
 CRTBRD:
+
+
                 movem.l     d0-d2,-(a7)
+                move.l      #$00FFFFFF,d1
+                jsr         STCOL
+                
+                move.w      #0,-(a7)
+                move.w      #0,-(a7)
+                move.w      #637,-(a7)
+                move.w      #480,-(a7)
+                jsr         _SHAPE
+                addi        #8,(a7)
+
                 move.l      #$000000FF,d1
                 jsr         STCOL
+                
                 move.w      #0,-(a7)
                 move.w      #0,-(a7)
                 move.w      #637,-(a7)
