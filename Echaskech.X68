@@ -20,7 +20,7 @@ CRTBRD:
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
                 
-                move.w      #0,-(a7)
+                move.w      #0,-(a7)        ; white bg
                 move.w      #0,-(a7)
                 move.w      #638,-(a7)
                 move.w      #480,-(a7)
@@ -30,28 +30,28 @@ CRTBRD:
                 move.l      #$000000FF,d1
                 jsr         STCOL
                 
-                move.w      #0,-(a7)
+                move.w      #0,-(a7)        ; top bar
                 move.w      #0,-(a7)
                 move.w      #638,-(a7)
                 move.w      #50,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
                 
-                move.w      #587,-(a7)
+                move.w      #587,-(a7)      ; right bar
                 move.w      #0,-(a7)
                 move.w      #638,-(a7)
                 move.w      #480,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
                 
-                move.w      #0,-(a7)
+                move.w      #0,-(a7)        ; left bar
                 move.w      #0,-(a7)
                 move.w      #50,-(a7)
                 move.w      #480,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
                 
-                move.w      #0,-(a7)
+                move.w      #0,-(a7)        ; bottom bar
                 move.w      #430,-(a7)
                 move.w      #637,-(a7)
                 move.w      #480,-(a7)
@@ -137,17 +137,27 @@ CHECK_ARROWS:                           ; get arrow inputs\
                 rts
                 
 DOWN:
+                cmp         #430,d5
+                bgt         Dend
                 addi        #1,d5
-                rts
+Dend:           rts
 RIGHT:           
+                cmpi.w      #580,d6
+                bgt         Rend
                 addi        #1,d6
-                rts
+Rend:           rts
 UP:
+                cmpi.w      #50,d5
+                blo         Uend
                 subi        #1,d5
-                rts
+Uend:           rts
+
 LEFT:
-                subi        #1,d6               
-                rts
+                cmpi.w      #50,d6
+                blo         Lend
+                subi        #1,d6   
+Lend:           rts 
+                
             
 CHECK_INPUTS:
                 
@@ -311,6 +321,7 @@ BUF ds.b   82
 ESG dc.b   'Invalid hex character!',0
 BLK dc.b   '                                                                                 ',0
     END    START        ; last line of source
+
 
 
 
