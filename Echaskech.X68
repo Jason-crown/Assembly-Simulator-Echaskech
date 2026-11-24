@@ -138,26 +138,24 @@ CHECK_ARROWS:                           ; get arrow inputs\
                 
 DOWN:
                 cmp         #430,d5
-                bgt         Dend
+                bge         CHECK_ARROWS
                 addi        #1,d5
-Dend:           rts
+                rts
 RIGHT:           
                 cmpi.w      #580,d6
-                bgt         Rend
+                bge         CHECK_ARROWS
                 addi        #1,d6
-Rend:           rts
+                rts
 UP:
                 cmpi.w      #50,d5
-                blo         Uend
+                ble         CHECK_ARROWS
                 subi        #1,d5
-Uend:           rts
-
+                rts
 LEFT:
                 cmpi.w      #50,d6
-                blo         Lend
+                ble         CHECK_ARROWS
                 subi        #1,d6   
-Lend:           rts 
-                
+                rts
             
 CHECK_INPUTS:
                 
