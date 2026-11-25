@@ -51,10 +51,14 @@ CRTBRD:
                 
                 move.w      #0,-(a7)        ; bottom bar
                 move.w      #430,-(a7)
-                move.w      #637,-(a7)
+                move.w      #638,-(a7)
                 move.w      #480,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
+                
+                move.l      #$00000000,d1
+                jsr         STCOL                
+                
                 movem.l     (a7)+,d0-d2
                 
 Main:           
@@ -160,14 +164,13 @@ LEFT:
                 rts
             
 CHECK_INPUTS:
-                
                 movem.l     d0-d1,-(a7)
                 move.b      #19,d0    
                 move.l      #'0123',d1
                 trap        #15
 
                 tst.b       d1
-                bne         CLEAR
+                bne         WIPE
                 
                 lsr.l       #8,d1
                 tst.b       d1
@@ -193,19 +196,16 @@ SPEED:
                 trap        #15
                 move.l      d1,d7
                 movem.l     (a7)+,d0-d6
-                jsr         LOOP
-                rts         
+                jsr         LOOP        
                 
 COLOR:
                 jsr         CLR_LN
                 lea         MSG,a1
                 move.b      #14,d0
                 trap        #15
-                
                 lea         BUF,a1
                 move.b      #2,d0
                 trap        #15
-                
                 clr.l       d2
                 clr.l       d3
                 
@@ -245,6 +245,7 @@ DONE:
                 jsr         STCOL
                 jsr         LOOP
                 rts
+                
 CLEAR:          
                 movem.l     d0-d1,-(sp)
                 move.w      #$FF00,d1
@@ -252,7 +253,6 @@ CLEAR:
                 trap        #15
                 movem.l     (sp)+,d0-d1 
                 jsr         CRTBRD               
-                rts    
 
 SLEEP:
                 link        a6,#0
@@ -324,6 +324,24 @@ loop1:
                 blo     loop2    
                 unlk    a6
                 rts
+                
+WIPE:
+                movem.l d0-d2,-(a7)
+                move.l  #$00FFFFFF,d1
+                jsr     STCOL
+                
+                move.w  #50,-(a7)        ; white bg
+                move.w  #50,-(a7)
+                move.w  #587,-(a7)
+                move.w  #430,-(a7)
+                jsr     _SHAPE
+                addi    #8,(a7)
+                move.l  #$00000000,d1
+                jsr     STCOL
+                movem.l (a7)+,d0-d2                
+                jsr     LOOP 
+
+               
 
 QUIT:
 EXIT:
