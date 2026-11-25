@@ -187,11 +187,9 @@ SPEED:
                 lea         SMG,a1
                 move.b      #14,d0
                 trap        #15
-                
-                lea         BUF,a1
-                move.b      #2,d0
+                move.b      #4,d0
                 trap        #15
-                
+                move.w      d1,d7
                 rts                
                 
 COLOR:
@@ -258,6 +256,7 @@ SLEEP:
                 move.l      #1,d1
                 move.b      #23,d0
                 trap        #15             ; Execute simulator task
+                
                 movem.l     (a7)+,d0-d2
                 unlk        a6 
                 rts 
