@@ -9,13 +9,11 @@ START:                  ; first instruction of program
 X   equ     8
 Y   equ     10
 * Put program code here    
-
+                move.w      #1,d7
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
                 jsr         CRTBRD
 CRTBRD:
-
-
                 movem.l     d0-d2,-(a7)
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
@@ -69,11 +67,15 @@ LOOP:
 
                 jsr         CHECK_ARROWS
                 jsr         CHECK_INPUTS
+                
                 move.w      d5,-(a7)
                 move.w      d6,-(a7)
                 jsr         WRITE
-                addq        #8,(a7)
+                addq        #4,(a7)
+                
+                move.w      d7,-(a7)
                 jsr         SLEEP
+                addq        #2,(a7)
                 
                 jsr         LOOP
                 
@@ -161,11 +163,11 @@ CHECK_INPUTS:
                 
                 movem.l     d0-d1,-(a7)
                 move.b      #19,d0    
-                move.l      #'0011',d1
+                move.l      #'0012',d1
                 trap        #15
 
                 tst.b       d1
-                bne         CLEAR
+                bne         SPEED
                 
                 lsr.l       #8,d1
                 tst.b       d1
@@ -173,14 +175,26 @@ CHECK_INPUTS:
                 
                 lsr.l       #8,d1
                 tst.b       d1
-                bne         MENU
+                bne         COLOR
                 
                 lsr.l       #8,d1
                 tst.b       d1
-                bne         MENU
+                bne         COLOR
                 movem.l     (a7)+,d0-d1
                 rts 
-MENU:
+SPEED:
+                jsr         CLR_LN
+                lea         SMG,a1
+                move.b      #14,d0
+                trap        #15
+                
+                lea         BUF,a1
+                move.b      #2,d0
+                trap        #15
+                
+                rts                
+                
+COLOR:
                 jsr         CLR_LN
                 lea         MSG,a1
                 move.b      #14,d0
@@ -213,7 +227,6 @@ PARSE_LOOP:
                 
                 sub.b       #'A'-10,d3
                 bra         SHIFT_IN
-                
 IS_DIGIT:
                 sub.b       #'0',d3
 SHIFT_IN:       
@@ -236,15 +249,17 @@ CLEAR:
                 move.b      #11,d0
                 trap        #15
                 movem.l     (sp)+,d0-d1 
-                jsr         Main               
+                jsr         CRTBRD               
                 rts    
 
 SLEEP:
-                movem.l     d0-d1,-(sp)
+                link        a6,#0
+                movem.l     d0-d2,-(a7)
+                move.l      #1,d1
                 move.b      #23,d0
-                move.l      #5,d1
-                trap        #15
-                movem.l     (sp)+,d0-d1
+                trap        #15             ; Execute simulator task
+                movem.l     (a7)+,d0-d2
+                unlk        a6 
                 rts 
                   
 STCOL:                 ; $00BBGGRR
@@ -302,7 +317,6 @@ loop1:
     
                 move.w  -2(a6),d1
 
-   
                 cmp     d4,d2          ; Height
                 blo     loop2    
                 unlk    a6
@@ -313,8 +327,9 @@ EXIT:
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
-DIS dc.b   '0 = Color (00RRGGBB), 1 = Clear stage',0
-MSG dc.b   'Input (00RRGGBB)',0
+DIS dc.b   '0 = Color (00RRGGBB), 1 = Clear stage, 2 = Speed',0
+MSG dc.b   'Input (00RRGGBB): ',0
+SMG dc.b   'Speed: ',0
 BUF ds.b   82
 ESG dc.b   'Invalid hex character!',0
 BLK dc.b   '                                                                                 ',0
