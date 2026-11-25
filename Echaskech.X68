@@ -163,9 +163,13 @@ CHECK_INPUTS:
                 
                 movem.l     d0-d1,-(a7)
                 move.b      #19,d0    
-                move.l      #'0012',d1
+                move.l      #'0123',d1
                 trap        #15
 
+                tst.b       d1
+                bne         CLEAR
+                
+                lsr.l       #8,d1
                 tst.b       d1
                 bne         SPEED
                 
@@ -176,13 +180,11 @@ CHECK_INPUTS:
                 lsr.l       #8,d1
                 tst.b       d1
                 bne         COLOR
-                
-                lsr.l       #8,d1
-                tst.b       d1
-                bne         COLOR
                 movem.l     (a7)+,d0-d1
                 rts 
+                              
 SPEED:
+                movem.l     d0-d6,-(a7)
                 jsr         CLR_LN
                 lea         SMG,a1
                 move.b      #14,d0
@@ -190,7 +192,9 @@ SPEED:
                 move.b      #4,d0
                 trap        #15
                 move.l      d1,d7
-                rts                
+                movem.l     (a7)+,d0-d6
+                jsr         LOOP
+                rts         
                 
 COLOR:
                 jsr         CLR_LN
