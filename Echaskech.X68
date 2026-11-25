@@ -73,9 +73,9 @@ LOOP:
                 jsr         WRITE
                 addq        #4,(a7)
                 
-                move.w      d7,-(a7)
+                move.l      d7,-(a7)
                 jsr         SLEEP
-                addq        #2,(a7)
+                addq        #4,(a7)
                 
                 jsr         LOOP
                 
@@ -189,7 +189,7 @@ SPEED:
                 trap        #15
                 move.b      #4,d0
                 trap        #15
-                move.w      d1,d7
+                move.l      d1,d7
                 rts                
                 
 COLOR:
@@ -253,7 +253,7 @@ CLEAR:
 SLEEP:
                 link        a6,#0
                 movem.l     d0-d2,-(a7)
-                move.l      #1,d1
+                move.l      8(a6),d1
                 move.b      #23,d0
                 trap        #15             ; Execute simulator task
                 
