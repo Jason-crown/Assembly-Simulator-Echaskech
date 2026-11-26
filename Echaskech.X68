@@ -12,19 +12,24 @@ Y   equ     10
                 clr         d0
                 clr         d1
                 clr         d2
-                clr         d3
-                clr         d4
+                clr         d3 ; board color
+                clr         d4 ; border color
                 clr         d5 ; x
                 clr         d6 ; y
                 clr         d7 ; speed
-                move.l      #$000000FF,d4
-                move.w      #1,d7
+                
                 move.l      #$00FFFFFF,d1
+                
+                move.l      #$00FFFFFF,d3
+                move.l      #$000000FF,d4
+                
+                move.w      #1,d7
+                
                 jsr         STCOL
                 jsr         CRTBRD
 CRTBRD:
                 movem.l     d0-d2,-(a7)
-                move.l      #$00FFFFFF,d1
+                move.l      d3,d1
                 jsr         STCOL
                 
                 move.w      #0,-(a7)        ; white bg
@@ -213,6 +218,7 @@ SPDEND:
                 jsr         LOOP        
                 
 COLOR:
+                movem.l     d5-d7,-(a7)
                 jsr         CLR_LN
                 lea         MSG,a1
                 move.b      #14,d0
@@ -255,11 +261,30 @@ INVALID:
                 trap        #15
                 bra         START
 DONE:
-                move.l      d2,d1        
+                jsr         CLR_LN
+                lea         MNU,a1
+                move.b      #14,d0
+                trap        #15
+                move.w      #4,d0
+                trap        #15
+                cmpi.w      #4,d1
+                beq         PENCOL
+                cmpi.w      #5,d1
+                beq         BORCOL
+                cmpi.w      #6,d1
+                beq         BRDCOL
+BRDCOL:         
+                move.l      d2,d3
+                bra         CCEND
+BORCOL:         
+                move.l      d2,d4
+                bra         CCEND
+PENCOL:
+                move.l      d2,d1 
                 jsr         STCOL
-                
+CCEND:             
+                movem.l     (a7)+,d5-d7   
                 jsr         LOOP
-                rts
                 
 CLEAR:          
                 movem.l     d0-d1,-(sp)
@@ -366,10 +391,6 @@ WIPE:
                 movem.l (a7)+,d0-d2                
                 jsr     LOOP 
                 
-BORCOL:
-                jsr     CLEAR
-                move.l  #$00FFFFFF,d4
-                jsr     CRTBRD
 QUIT:
 EXIT:
     SIMHALT             ; halt simulator
@@ -381,6 +402,7 @@ SMG dc.b   'Speed (1-5): ',0
 BUF ds.b   82
 ESG dc.b   'Invalid hex character!',0
 BLK dc.b   '                                                                                 ',0
+MNU dc.b   'Change - Pen(4),  border(5),  board(6): ',0
     END    START        ; last line of source
 
 
