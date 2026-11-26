@@ -9,6 +9,15 @@ START:                  ; first instruction of program
 X   equ     8
 Y   equ     10
 * Put program code here    
+                clr         d0
+                clr         d1
+                clr         d2
+                clr         d3
+                clr         d4
+                clr         d5
+                clr         d6
+                clr         d7
+                
                 move.w      #1,d7
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
