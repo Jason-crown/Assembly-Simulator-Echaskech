@@ -12,7 +12,7 @@ Y   equ     10
                 move.w      #1,d7
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
-                move.l      #$000000FF,-(a7)
+                move.l      #$0000FFFF,-(a7)
                 jsr         CRTBRD
                 addi.w      #8,(a7)
                 
@@ -256,7 +256,7 @@ CLEAR:
                 trap        #15
                 movem.l     (sp)+,d0-d1 
                 
-                move.l      #$000000FF,-(a7)
+                move.l      #$00FF00FF,-(a7)
                 jsr         CRTBRD
                 addi.w      #8,(a7)              
 
