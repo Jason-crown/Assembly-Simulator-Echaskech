@@ -17,7 +17,7 @@ Y   equ     10
                 clr         d5 ; x
                 clr         d6 ; y
                 clr         d7 ; speed
-                
+                move.l      #$000000FF,d4
                 move.w      #1,d7
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
@@ -34,7 +34,7 @@ CRTBRD:
                 jsr         _SHAPE
                 addi        #8,(a7)
 
-                move.l      #$000000FF,d1
+                move.l      d4,d1
                 jsr         STCOL
                 
                 move.w      #0,-(a7)        ; top bar
@@ -203,7 +203,12 @@ SPEED:
                 trap        #15
                 move.b      #4,d0
                 trap        #15
+                cmpi        #6,d1
+                bge         SPDEND
+                subi        #6,d1
+                neg         d1
                 move.l      d1,d7
+SPDEND:
                 movem.l     (a7)+,d0-d6
                 jsr         LOOP        
                 
@@ -252,6 +257,7 @@ INVALID:
 DONE:
                 move.l      d2,d1        
                 jsr         STCOL
+                
                 jsr         LOOP
                 rts
                 
@@ -297,6 +303,14 @@ CLR_LN:
                 
                 lea         DIS,a1
                 move.b      #13,d0
+                trap        #15
+                
+                lea         BLK,a1
+                move.b      #13,d0
+                trap        #15
+                
+                move.b      #11,d0
+                move.w      #$0001,d1
                 trap        #15
                 movem.l     (a7)+,d0-d1/a1
                 rts
@@ -353,18 +367,9 @@ WIPE:
                 jsr     LOOP 
                 
 BORCOL:
-                movem.l d0-d7,-(a7)
-                jsr         CLR_LN
-                lea         MSG,a1
-                move.b      #14,d0
-                trap        #15
-                lea         BUF,a1
-                move.b      #2,d0
-                trap        #15
-                clr.l       d2
-                clr.l       d3
-                movem.l (a7)+,d0-d7
-                rts
+                jsr     CLEAR
+                move.l  #$00FFFFFF,d4
+                jsr     CRTBRD
 QUIT:
 EXIT:
     SIMHALT             ; halt simulator
@@ -372,11 +377,12 @@ EXIT:
 * Put variables and constants here
 DIS dc.b   '       0 = Color (00RRGGBB), 1 = reset stage, 2 = Speed, 3 = Clear Board        ',0
 MSG dc.b   'Input (00RRGGBB): ',0
-SMG dc.b   'Speed: ',0
+SMG dc.b   'Speed (1-5): ',0
 BUF ds.b   82
 ESG dc.b   'Invalid hex character!',0
 BLK dc.b   '                                                                                 ',0
     END    START        ; last line of source
+
 
 
 
