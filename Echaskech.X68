@@ -340,6 +340,8 @@ WIPE:
                 jsr     STCOL
                 movem.l (a7)+,d0-d2                
                 jsr     LOOP 
+                
+
 
                
 
@@ -348,13 +350,15 @@ EXIT:
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
-DIS dc.b   '0 = Color (00RRGGBB), 1 = Clear stage, 2 = Speed',0
+DIS dc.b   '       0 = Color (00RRGGBB), 1 = reset stage, 2 = Speed, 3 = Clear Board        ',0
 MSG dc.b   'Input (00RRGGBB): ',0
 SMG dc.b   'Speed: ',0
 BUF ds.b   82
 ESG dc.b   'Invalid hex character!',0
 BLK dc.b   '                                                                                 ',0
     END    START        ; last line of source
+
+
 
 
 
