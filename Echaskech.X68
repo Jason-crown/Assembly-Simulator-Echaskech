@@ -351,6 +351,20 @@ WIPE:
                 jsr     STCOL
                 movem.l (a7)+,d0-d2                
                 jsr     LOOP 
+                
+BORCOL:
+                movem.l d0-d7,-(a7)
+                jsr         CLR_LN
+                lea         MSG,a1
+                move.b      #14,d0
+                trap        #15
+                lea         BUF,a1
+                move.b      #2,d0
+                trap        #15
+                clr.l       d2
+                clr.l       d3
+                movem.l (a7)+,d0-d7
+                rts
 QUIT:
 EXIT:
     SIMHALT             ; halt simulator
