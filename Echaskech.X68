@@ -14,9 +14,9 @@ Y   equ     10
                 clr         d2
                 clr         d3
                 clr         d4
-                clr         d5
-                clr         d6
-                clr         d7
+                clr         d5 ; x
+                clr         d6 ; y
+                clr         d7 ; speed
                 
                 move.w      #1,d7
                 move.l      #$00FFFFFF,d1
@@ -313,6 +313,7 @@ NEW_LINE:
                 
 _SHAPE:
                 link    a6,#-2
+                movem.l d0-d4,-(a7)
                 move.w  14(a6),d1
                 move.w  12(a6),d2
                 move.w  10(a6),d3
@@ -331,6 +332,7 @@ loop1:
 
                 cmp     d4,d2          ; Height
                 blo     loop2    
+                movem.l (a7)+,d0-d4
                 unlk    a6
                 rts
                 
@@ -349,11 +351,6 @@ WIPE:
                 jsr     STCOL
                 movem.l (a7)+,d0-d2                
                 jsr     LOOP 
-                
-
-
-               
-
 QUIT:
 EXIT:
     SIMHALT             ; halt simulator
