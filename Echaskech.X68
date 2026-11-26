@@ -12,9 +12,9 @@ Y   equ     10
                 move.w      #1,d7
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
-                move.l      #000000FF,-(a7)
+                move.l      #$000000FF,-(a7)
                 jsr         CRTBRD
-                addi.w      #8,(d7)
+                addi.w      #8,(a7)
                 
 CRTBRD:
                 movem.l     d0-d2,-(a7)
@@ -255,7 +255,10 @@ CLEAR:
                 move.b      #11,d0
                 trap        #15
                 movem.l     (sp)+,d0-d1 
-                jsr         CRTBRD               
+                
+                move.l      #$000000FF,-(a7)
+                jsr         CRTBRD
+                addi.w      #8,(a7)              
 
 SLEEP:
                 link        a6,#0
