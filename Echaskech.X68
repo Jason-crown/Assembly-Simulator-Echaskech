@@ -12,10 +12,7 @@ Y   equ     10
                 move.w      #1,d7
                 move.l      #$00FFFFFF,d1
                 jsr         STCOL
-                move.l      #$0000FFFF,-(a7)
                 jsr         CRTBRD
-                addi.w      #8,(a7)
-                
 CRTBRD:
                 movem.l     d0-d2,-(a7)
                 move.l      #$00FFFFFF,d1
@@ -28,7 +25,7 @@ CRTBRD:
                 jsr         _SHAPE
                 addi        #8,(a7)
 
-                move.l      8(a6),d1
+                move.l      #$000000FF,d1
                 jsr         STCOL
                 
                 move.w      #0,-(a7)        ; top bar
@@ -255,10 +252,7 @@ CLEAR:
                 move.b      #11,d0
                 trap        #15
                 movem.l     (sp)+,d0-d1 
-                
-                move.l      #$00FF00FF,-(a7)
-                jsr         CRTBRD
-                addi.w      #8,(a7)              
+                jsr         CRTBRD               
 
 SLEEP:
                 link        a6,#0
