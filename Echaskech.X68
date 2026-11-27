@@ -27,7 +27,9 @@ Y   equ     10
                 
                 jsr         STCOL
                 jsr         CRTBRD
+                jsr         Main
 CRTBRD:
+                
                 movem.l     d0-d2,-(a7)
                 move.l      d3,d1
                 jsr         STCOL
@@ -38,7 +40,10 @@ CRTBRD:
                 move.w      #480,-(a7)
                 jsr         _SHAPE
                 addi        #8,(a7)
-
+                movem.l     (a7)+,d0-d2
+                jsr         CRTBOR
+CRTBOR:
+                movem.l     d0-d2,-(a7)
                 move.l      d4,d1
                 jsr         STCOL
                 
@@ -72,12 +77,16 @@ CRTBRD:
                 
                 move.l      #$00000000,d1
                 jsr         STCOL                
-                
                 movem.l     (a7)+,d0-d2
                 
 Main:           
                 move.w      #100,d5
                 move.w      #100,d6
+
+                move.b      #11,d0
+                move.w      #$0000,d1
+                trap        #15
+
                 lea         DIS,a1
                 move.b      #13,d0
                 trap        #15
@@ -275,14 +284,26 @@ DONE:
                 beq         BRDCOL
 BRDCOL:         
                 move.l      d2,d3
+                jsr         WIPE
                 bra         CCEND
 BORCOL:         
                 move.l      d2,d4
+                jsr         CRTBOR
+                move.b      #11,d0
+                move.w      #$0000,d1
+                trap        #15
+                
+                lea         DIS,a1
+                move.b      #13,d0
+                trap        #15
+                
+      
                 bra         CCEND
 PENCOL:
                 move.l      d2,d1 
                 jsr         STCOL
 CCEND:             
+                jsr         CLR_LN
                 movem.l     (a7)+,d5-d7   
                 jsr         LOOP
                 
@@ -292,7 +313,8 @@ CLEAR:
                 move.b      #11,d0
                 trap        #15
                 movem.l     (sp)+,d0-d1 
-                jsr         CRTBRD               
+                jsr         CRTBRD  
+                jsr         Main             
 
 SLEEP:
                 link        a6,#0
@@ -377,7 +399,7 @@ loop1:
                 
 WIPE:
                 movem.l d0-d2,-(a7)
-                move.l  #$00FFFFFF,d1
+                move.l  d3,d1
                 jsr     STCOL
                 
                 move.w  #50,-(a7)        ; white bg
