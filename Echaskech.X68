@@ -1,5 +1,5 @@
 *-----------------------------------------------------------
-* Title      : Echaskech
+* Title      : Etch-A-Sketch
 * Written by : Jason Klutse
 * Date       : 2026-11-19
 * Description: Draw in the simulator using the arrow keys
